@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Избранное | Лисёнок Маркет</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <a href="основная страница.html"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+      </div>
+      <div class="user-actions">
+        <div class="user-menu">
+          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
+          <div class="user-dropdown" id="user-dropdown">
+            <button id="logout-btn">Выйти</button>
+          </div>
+        </div>
+        <a href="favorites.html"><i class="fas fa-heart"></i></a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container favorites-page">
+    <h1 class="page-title">Избранные товары</h1>
+    
+    <div id="favorites-content">
+      <!-- Контент избранного будет добавляться динамически -->
+    </div>
+    
+    <div id="auth-message" style="display: none;">
+      <div class="auth-message">
+        <i class="fas fa-lock"></i>
+        <h2>Требуется авторизация</h2>
+        <p>Для просмотра избранных товаров необходимо войти в систему</p>
+        <a href="авторизация.html" class="btn btn-primary">Войти или зарегистрироваться</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>Лисёнок Маркет</h3>
+          <p>Лучший выбор товаров для ваших любимцев</p>
+        </div>
+        <div class="footer-col">
+          <h3>Контакты</h3>
+          <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
+          <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
+        </div>
+        <div class="footer-col">
+          <h3>Соцсети</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Переключение состояния избранного
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+        
+        // Проверка на пустоту избранного
+        const activeFavorites = document.querySelectorAll('.favorite-btn.active').length;
+        document.querySelector('.empty-favorites').style.display = 
+          activeFavorites > 0 ? 'none' : 'flex';
+      });
+    });
+    
+    // Авторизация
+    const userLink = document.getElementById("user-link");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userName = localStorage.getItem("userName");
+    
+    if (userName) {
+      userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
+      userLink.href = "account.html";
+      if (logoutBtn) logoutBtn.style.display = "block";
+    } else {
+      userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
+      userLink.href = "авторизация.html";
+      if (logoutBtn) logoutBtn.style.display = "none";
+    }
+    
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("userName");
+        window.location.href = "/авторизация.html";
+      });
+      // Функция для отображения избранного
+    function renderFavorites() {
+      const favoritesContent = document.getElementById('favorites-content');
+      const authMessage = document.getElementById('auth-message');
+      
+      if (!localStorage.getItem("userName")) {
+        favoritesContent.style.display = 'none';
+        authMessage.style.display = 'block';
+        return;
+      }
+      
+      authMessage.style.display = 'none';
+      favoritesContent.style.display = 'block';
+      
+      // Получаем избранное из localStorage
+      const favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
+      
+      if (favorites.length === 0) {
+        favoritesContent.innerHTML = `
+          <div class="empty-favorites">
+            <i class="fas fa-heart-broken"></i>
+            <h3>В избранном пока пусто</h3>
+            <p>Добавляйте товары, нажимая на значок сердца</p>
+            <a href="основная страница.html" class="btn btn-primary">Перейти к покупкам</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Формируем HTML для избранного
+      let itemsHTML = '';
+      
+      favorites.forEach(productId => {
+        // В реальном приложении здесь должны быть данные о товаре из базы
+        // Для демо используем статические данные
+        const product = {
+          id: productId,
+          name: productId === '1' ? 'Бобриная Хатка' : 'Норка для суриката',
+          price: productId === '1' ? 1699 : 1499,
+          image: `https://via.placeholder.com/300x300?text=Товар ${productId}`,
+          discount: productId === '1' ? '-15%' : '-17%'
+        };
+        
+        itemsHTML += `
+          <div class="product-card">
+            <button class="favorite-btn active" data-id="${product.id}"><i class="fas fa-heart"></i></button>
+            <div class="product-badge">${product.discount}</div>
+            <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+              <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="product-details">
+              <h3>${product.name}</h3>
+              <div class="price">
+                <span class="current-price">₽${product.price}</span>
+              </div>
+              <div class="product-actions">
+                <button class="btn btn-small" data-id="${product.id}">В корзину</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      favoritesContent.innerHTML = `
+        <div class="favorites-grid">
+          ${itemsHTML}
+        </div>
+      `;
+      
+      // Добавляем обработчики событий
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          removeFromFavorites(productId);
+        });
+      });
+      
+      document.querySelectorAll('.btn-small').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          addToCart(productId);
+        });
+      });
+    }
+    
+    // Функция удаления из избранного
+    function removeFromFavorites(productId) {
+      let favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
+      favorites = favorites.filter(id => id !== productId);
+      localStorage.setItem("userFavorites", JSON.stringify(favorites));
+      renderFavorites();
+    }
+    
+    // Функция для добавления в корзину
+    function addToCart(productId) {
+      if (!localStorage.getItem("userName")) {
+        window.location.href = "авторизация.html";
+        return;
+      }
+      
+      let cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: productId,
+          quantity: 1
+        });
+      }
+      
+      localStorage.setItem("userCart", JSON.stringify(cart));
+      alert("Товар добавлен в корзину!");
+    }
+    
+    // При загрузке страницы отображаем избранное
+    window.addEventListener('DOMContentLoaded', renderFavorites);
+    }
+  </script>
+</body>
+</html>

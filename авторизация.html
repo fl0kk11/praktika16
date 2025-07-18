@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ч<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -343,40 +343,87 @@
     </div>
 
     <script>
-        // Переключение между вкладками
-        const tabs = document.querySelectorAll('.auth-tab');
-        const forms = document.querySelectorAll('.auth-form');
+    // Переключение между вкладками
+    const tabs = document.querySelectorAll('.auth-tab');
+    const forms = document.querySelectorAll('.auth-form');
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                forms.forEach(f => f.classList.remove('active'));
-
-                tab.classList.add('active');
-                document.getElementById(`${tab.dataset.tab}-form`).classList.add('active');
-            });
-        });
-
-        // Переключение на форму входа из регистрации
-        document.querySelector('.switch-to-login').addEventListener('click', (e) => {
-            e.preventDefault();
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'));
             forms.forEach(f => f.classList.remove('active'));
-
-            document.querySelector('[data-tab="login"]').classList.add('active');
-            document.getElementById('login-form').classList.add('active');
+            tab.classList.add('active');
+            document.getElementById(`${tab.dataset.tab}-form`).classList.add('active');
         });
+    });
 
-        // Обработка форм
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Вход выполнен! (это демо)');
-        });
+    // Переключение на форму входа из регистрации
+    document.querySelector('.switch-to-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        tabs.forEach(t => t.classList.remove('active'));
+        forms.forEach(f => f.classList.remove('active'));
+        document.querySelector('[data-tab="login"]').classList.add('active');
+        document.getElementById('login-form').classList.add('active');
+    });
 
-        document.getElementById('register-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Регистрация успешна! (это демо)');
-        });
+    // Обработка формы входа
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        try {
+            const response = await fetch('http://localhost:8081/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("userName", result.user.name);
+                window.location.href = '/основная страница.html';
+            }
+            else {
+                alert(result.error || 'Неверные данные');
+            }
+        } catch (error) {
+            alert('Ошибка подключения к серверу');
+        }
+    });
+
+    // Обработка формы регистрации
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-confirm').value;
+
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8081/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Регистрация успешна! Теперь войдите.');
+                document.querySelector('[data-tab="login"]').click();
+            } else {
+                alert(result.error || 'Произошла ошибка');
+            }
+        } catch (error) {
+            alert('Ошибка подключения к серверу');
+        }
+    });
     </script>
-</body>
+    </body>
 </html>

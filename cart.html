@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Корзина | Лисёнок Маркет</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <a href="основная страница.html"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+      </div>
+      <div class="user-actions">
+        <div class="user-menu">
+          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
+          <div class="user-dropdown" id="user-dropdown">
+            <button id="logout-btn">Выйти</button>
+          </div>
+        </div>
+        <a href="favorites.html"><i class="fas fa-heart"></i></a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+      </div>
+    </div>
+  </header>
+
+   <main class="container cart-page">
+    <h1 class="page-title">Ваша корзина</h1>
+    
+    <div id="cart-content">
+      <!-- Контент корзины будет добавляться динамически -->
+    </div>
+    
+    <div id="auth-message" style="display: none;">
+      <div class="auth-message">
+        <i class="fas fa-lock"></i>
+        <h2>Требуется авторизация</h2>
+        <p>Для просмотра корзины и оформления заказа необходимо войти в систему</p>
+        <a href="авторизация.html" class="btn btn-primary">Войти или зарегистрироваться</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>Лисёнок Маркет</h3>
+          <p>Лучший выбор товаров для ваших любимцев</p>
+        </div>
+        <div class="footer-col">
+          <h3>Контакты</h3>
+          <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
+          <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
+        </div>
+        <div class="footer-col">
+          <h3>Соцсети</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Обновление количества товаров
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const input = this.parentElement.querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        
+        if (this.classList.contains('minus') && value > 1) {
+          input.value = value - 1;
+        } else if (this.classList.contains('plus')) {
+          input.value = value + 1;
+        }
+        
+        // Здесь должна быть логика пересчета суммы
+      });
+    });
+    
+    // Удаление товаров
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.cart-item').remove();
+        // Здесь должна быть логика пересчета суммы
+      });
+    });
+    
+    // Авторизация
+    const userLink = document.getElementById("user-link");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userName = localStorage.getItem("userName");
+    
+    if (userName) {
+      userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
+      userLink.href = "account.html";
+      if (logoutBtn) logoutBtn.style.display = "block";
+    } else {
+      userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
+      userLink.href = "авторизация.html";
+      if (logoutBtn) logoutBtn.style.display = "none";
+    }
+    
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("userName");
+        window.location.href = "/авторизация.html";
+      });
+    }
+    // Функция для отображения корзины
+    function renderCart() {
+      const cartContent = document.getElementById('cart-content');
+      const authMessage = document.getElementById('auth-message');
+      
+      if (!localStorage.getItem("userName")) {
+        cartContent.style.display = 'none';
+        authMessage.style.display = 'block';
+        return;
+      }
+      
+      authMessage.style.display = 'none';
+      cartContent.style.display = 'block';
+      
+      // Получаем корзину из localStorage
+      const cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      
+      if (cart.length === 0) {
+        cartContent.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Ваша корзина пуста</h3>
+            <p>Добавьте товары, чтобы продолжить покупки</p>
+            <a href="основная страница.html" class="btn btn-primary">Перейти к товарам</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Формируем HTML для корзины
+      let itemsHTML = '';
+      let totalPrice = 0;
+      
+      cart.forEach(item => {
+        // В реальном приложении здесь должны быть данные о товаре из базы
+        // Для демо используем статические данные
+        const product = {
+          id: item.id,
+          name: item.id === '1' ? 'Бобриная Хатка' : 'Норка для суриката',
+          price: item.id === '1' ? 1699 : 1499,
+          image: `https://via.placeholder.com/150x150?text=Товар ${item.id}`
+        };
+        
+        const itemTotal = product.price * item.quantity;
+        totalPrice += itemTotal;
+        
+        itemsHTML += `
+          <div class="cart-item">
+            <div class="cart-item-image">
+              <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="cart-item-details">
+              <h3>${product.name}</h3>
+              <div class="price">
+                <span class="current-price">₽${product.price}</span>
+              </div>
+              <div class="cart-item-actions">
+                <div class="quantity-selector">
+                  <button class="quantity-btn minus">-</button>
+                  <input type="number" value="${item.quantity}" min="1" class="quantity-input">
+                  <button class="quantity-btn plus">+</button>
+                </div>
+                <button class="remove-btn" data-id="${item.id}"><i class="fas fa-trash-alt"></i> Удалить</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      const deliveryPrice = 490;
+      const totalWithDelivery = totalPrice + deliveryPrice;
+      
+      cartContent.innerHTML = `
+        <div class="cart-container">
+          <div class="cart-items">
+            ${itemsHTML}
+          </div>
+          
+          <div class="cart-summary">
+            <h2>Итого</h2>
+            <div class="summary-details">
+              <div class="summary-row">
+                <span>Товары (${cart.reduce((sum, item) => sum + item.quantity, 0)} шт.)</span>
+                <span>₽${totalPrice}</span>
+              </div>
+              <div class="summary-row">
+                <span>Доставка</span>
+                <span>₽${deliveryPrice}</span>
+              </div>
+              <div class="summary-row total">
+                <span>Всего</span>
+                <span>₽${totalWithDelivery}</span>
+              </div>
+            </div>
+            <button class="btn btn-primary checkout-btn">Оформить заказ</button>
+            <a href="основная страница.html" class="continue-shopping">
+              <i class="fas fa-arrow-left"></i> Продолжить покупки
+            </a>
+          </div>
+        </div>
+      `;
+      
+      // Добавляем обработчики событий
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          removeFromCart(productId);
+        });
+      });
+      
+      document.querySelectorAll('.quantity-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const input = this.parentElement.querySelector('.quantity-input');
+          let value = parseInt(input.value);
+          
+          if (this.classList.contains('minus') && value > 1) {
+            input.value = value - 1;
+          } else if (this.classList.contains('plus')) {
+            input.value = value + 1;
+          }
+          
+          updateCart();
+        });
+      });
+      
+      document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+          if (this.value < 1) this.value = 1;
+          updateCart();
+        });
+      });
+    }
+    
+    // Функция обновления корзины
+    function updateCart() {
+      const cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      
+      document.querySelectorAll('.cart-item').forEach(item => {
+        const productId = item.querySelector('.remove-btn').getAttribute('data-id');
+        const quantity = parseInt(item.querySelector('.quantity-input').value);
+        
+        const cartItem = cart.find(i => i.id === productId);
+        if (cartItem) {
+          cartItem.quantity = quantity;
+        }
+      });
+      
+      localStorage.setItem("userCart", JSON.stringify(cart));
+      renderCart();
+    }
+    
+    // Функция удаления из корзины
+    function removeFromCart(productId) {
+      let cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      cart = cart.filter(item => item.id !== productId);
+      localStorage.setItem("userCart", JSON.stringify(cart));
+      renderCart();
+    }
+    
+    // При загрузке страницы отображаем корзину
+    window.addEventListener('DOMContentLoaded', renderCart);
+  </script>
+</body>
+</html>
