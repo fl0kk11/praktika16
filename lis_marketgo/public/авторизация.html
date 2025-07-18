@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ч<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -381,9 +381,10 @@
             const result = await response.json();
 
             if (response.ok) {
-                alert('Успешный вход! Добро пожаловать, ' + result.user.name);
-                window.location.href = 'index.html'; // или куда тебе нужно
-            } else {
+                localStorage.setItem("userName", result.user.name);
+                window.location.href = '/основная страница.html';
+            }
+            else {
                 alert(result.error || 'Неверные данные');
             }
         } catch (error) {

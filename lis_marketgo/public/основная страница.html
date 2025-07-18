@@ -1,151 +1,155 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лисёнок - маркет</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лисёнок - маркет</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <!-- В шапке -->
-    <div class="auth-dropdown">
-      <button class="auth-toggle">
-          <i class="fas fa-user"></i> Аккаунт
-      </button>
-      <div class="auth-dropdown-content">
-          <form class="auth-form">
-              <input type="email" placeholder="Email" required>
-              <input type="password" placeholder="Пароль">
-              <button type="submit" class="btn">Войти</button>
-              <div class="auth-links">
-                  <a href="#">Забыли пароль?</a>
-                  <a href="#">Регистрация</a>
-              </div>
-          </form>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <a href="#"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+      </div>
+      <div class="user-actions">
+        <div class="user-menu">
+          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
+        <div class="user-dropdown" id="user-dropdown">
+          <button id="logout-btn">Выйти</button>
+        </div>
+      </div>
+  <a href="favorites.html"><i class="fas fa-heart"></i></a>
+  <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+</div>
+
+    </div>
+  </header>
+
+  <!-- Баннер с анимированным градиентом -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Новая коллекция <span>для лисят:)</span></h1>
+      <p>Скидки до 60% на всё этой неделей</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-primary">Купить сейчас</a>
+        <a href="#" class="btn btn-outline">Узнать больше</a>
       </div>
     </div>
-    <!-- Шапка с улучшенным поиском -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <a href="#"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
-            </div>
-            <div class="search">
-                <input type="text" placeholder="Найти смартфоны, одежду, книги...">
-                <button><i class="fas fa-search"></i> Поиск</button>
-            </div>
-            <nav class="nav">
-                <a href="#" class="nav-link"><i class="fas fa-bell"></i></a>
-                <a href="#" class="nav-link"><i class="fas fa-heart"></i></a>
-                <a href="#" class="nav-link cart"><i class="fas fa-shopping-cart"></i> <span class="cart-count">3</span></a>
-            </nav>
-        </div>
-    </header>
+    <div class="gradient-circle"></div>
+  </section>
 
-    <!-- Баннер с анимированным градиентом -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Новая коллекция <span>для лисят:)</span></h1>
-            <p>Скидки до 60% на всё этой неделей</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Купить сейчас</a>
-                <a href="#" class="btn btn-outline">Узнать больше</a>
-            </div>
-        </div>
-        <div class="gradient-circle"></div>
-    </section>
+  <!-- Категории -->
+  <section class="categories">
+    <div class="container">
+      <h2 class="section-title">Категории</h2>
+      <div class="category-grid">
+        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+          <div class="category-icon"><i class="fas fa-paw"></i></div>
+          <h3>Лисы</h3>
+        </a>
+        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
+          <div class="category-icon"><i class="fas fa-cat"></i></div>
+          <h3>Кошки</h3>
+        </a>
+        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
+          <div class="category-icon"><i class="fas fa-dog"></i></div>
+          <h3>Собаки</h3>
+        </a>
+        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
+          <div class="category-icon"><i class="fas fa-dove"></i></div>
+          <h3>Птицы</h3>
+        </a>
+      </div>
+    </div>
+  </section>
 
-    <!-- Улучшенные категории -->
-    <section class="categories">
-        <div class="container">
-            <h2 class="section-title">Категории</h2>
-            <div class="category-grid">
-                <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
-                    <div class="category-icon"><i class="fas fa-paw"></i></div>
-                    <h3>Лисы</h3>
-                </a>
-                <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
-                    <div class="category-icon"><i class="fas fa-cat"></i></div>
-                    <h3>Кошки</h3>
-                </a>
-                <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
-                    <div class="category-icon"><i class="fas fa-dog"></i></div>
-                    <h3>Собаки</h3>
-                </a>
-                <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
-                    <div class="category-icon"><i class="fas fa-dove"></i></div>
-                    <h3>Птицы</h3>
-                </a>
+  <!-- Товары -->
+  <section class="products">
+    <div class="container">
+      <h2 class="section-title">Популярные товары</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-badge">-15%</div>
+          <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+            <img src="https://via.placeholder.com/300x300?text=Хатка крафтовая" alt="Хатка крафтовая">
+          </div>
+          <div class="product-details">
+            <h3>Бобриная Хатка</h3>
+            <div class="price">
+              <span class="current-price">₽1699</span>
+              <span class="old-price">₽1999</span>
             </div>
+            <button class="btn btn-small">В корзину</button>
+          </div>
         </div>
-    </section>
 
-    <!-- Товары с улучшенными карточками -->
-    <section class="products">
-        <div class="container">
-            <h2 class="section-title">Популярные товары</h2>
-            <div class="product-grid">
-                <!-- Товар 1 -->
-                <div class="product-card">
-                    <div class="product-badge">-15%</div>
-                    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-                        <img src="https://via.placeholder.com/300x300?text=Хатка крафтовая" alt="Хатка крафтовая">
-                    </div>
-                    <div class="product-details">
-                        <h3>Бобриная Хатка</h3>
-                        <div class="price">
-                            <span class="current-price">₽1699</span>
-                            <span class="old-price">₽1999</span>
-                        </div>
-                        <button class="btn btn-small">В корзину</button>
-                    </div>
-                </div>
-                <!-- Остальные товары аналогично -->
-                <div class="product-card">
-                    <div class="product-badge">-17%</div>
-                    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-                        <img src="https://via.placeholder.com/300x300?text=Норка для суриката" alt="Норка крафтовая">
-                    </div>
-                    <div class="product-details">
-                        <h3>Норка для суриката</h3>
-                        <div class="price">
-                            <span class="current-price">₽1499</span>
-                            <span class="old-price">₽1799</span>
-                        </div>
-                        <button class="btn btn-small">В корзину</button>
-                    </div>
-                </div>
+        <div class="product-card">
+          <div class="product-badge">-17%</div>
+          <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+            <img src="https://via.placeholder.com/300x300?text=Норка для суриката" alt="Норка крафтовая">
+          </div>
+          <div class="product-details">
+            <h3>Норка для суриката</h3>
+            <div class="price">
+              <span class="current-price">₽1499</span>
+              <span class="old-price">₽1799</span>
             </div>
+            <button class="btn btn-small">В корзину</button>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Подвал с градиентом -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>Лисёнок Маркет</h3>
-                    <p>Лучший выбор товаров для ваших любимцев</p>
-                </div>
-                <div class="footer-col">
-                    <h3>Контакты</h3>
-                    <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
-                    <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
-                </div>
-                <div class="footer-col">
-                    <h3>Соцсети</h3>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-vk"></i></a>
-                        <a href="#"><i class="fab fa-telegram"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-            </div>
+  <!-- Подвал -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>Лисёнок Маркет</h3>
+          <p>Лучший выбор товаров для ваших любимцев</p>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+        <div class="footer-col">
+          <h3>Контакты</h3>
+          <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
+          <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
         </div>
-    </footer>
+        <div class="footer-col">
+          <h3>Соцсети</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+    </div>
+  </footer>
+  <script>
+    const userLink = document.getElementById("user-link");
+    const logoutBtn = document.getElementById("logout-btn"); // кнопка "Выйти"
+    const userName = localStorage.getItem("userName");
+  if (userName) {
+    userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
+    userLink.href = "account.html";
+      if (logoutBtn) logoutBtn.style.display = "inline-block";
+  } else {
+    userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
+    userLink.href = "авторизация.html";
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("userName");
+      window.location.href = "/авторизация.html";
+    });
+  }
+  </script>
 </body>
 </html>
