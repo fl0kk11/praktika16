@@ -277,6 +277,67 @@
     
     // При загрузке страницы отображаем корзину
     window.addEventListener('DOMContentLoaded', renderCart);
+
+// Функция для расчета общей суммы заказа
+    function calculateOrderTotal() {
+      const cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      let productsTotal = 0;
+      let totalItems = 0;
+      
+      cart.forEach(item => {
+        const productPrice = item.id === '1' ? 1699 : 1499;
+        productsTotal += productPrice * item.quantity;
+        totalItems += item.quantity;
+      });
+      
+      const delivery = 490;
+      const total = productsTotal + delivery;
+      
+      return {
+        items: cart,
+        productsTotal,
+        delivery,
+        total,
+        totalItems
+      };
+    }
+
+    // Обработчик кнопки "Оформить заказ"
+    function setupCheckoutButton() {
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('checkout-btn')) {
+          e.preventDefault();
+          
+          // Проверка авторизации
+          if (!localStorage.getItem("userName")) {
+            window.location.href = "авторизация.html";
+            return;
+          }
+          
+          // Проверка на пустую корзину
+          const cart = JSON.parse(localStorage.getItem("userCart")) || [];
+          if (cart.length === 0) {
+            alert("Ваша корзина пуста!");
+            return;
+          }
+          
+          // Получаем данные корзины
+          const orderData = calculateOrderTotal();
+          
+          // Сохраняем данные заказа в localStorage
+          localStorage.setItem("currentOrder", JSON.stringify(orderData));
+          
+          // Перенаправляем на страницу оплаты
+          window.location.href = "payment.html";
+        }
+      });
+    }
+
+    // При загрузке страницы
+    window.addEventListener('DOMContentLoaded', function() {
+      renderCart();
+      setupCheckoutButton();
+    });
   </script>
 </body>
 </html>

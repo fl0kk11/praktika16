@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LisenokMarket - Оплата</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Stripe Elements -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --light: #f8f9ff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 30px rgba(106, 17, 203, 0.1);
+            padding: 15px 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo a {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo span {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .payment-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .payment-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(106, 17, 203, 0.15);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .payment-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .payment-content {
+            padding: 30px;
+        }
+
+        .order-summary {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row.total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(106, 17, 203, 0.4);
+        }
+
+        .payment-errors {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .StripeElement {
+            background: #f8f9ff;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .StripeElement:focus {
+            border-color: var(--primary);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 576px) {
+            .payment-box {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .payment-header {
+                padding: 20px;
+            }
+
+            .payment-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="payment-container">
+        <div class="payment-box">
+            <div class="payment-header">
+                <h2>Оформление заказа</h2>
+                <p>Завершите оформление, введя свои данные</p>
+            </div>
+
+            <div class="payment-content">
+                <!-- Сумма заказа -->
+                <div class="order-summary">
+                    <h3>Ваш заказ</h3>
+                    <div class="summary-row">
+                        <span>Товары (2 шт.)</span>
+                        <span>₽3198</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Доставка</span>
+                        <span>₽490</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Итого к оплате</span>
+                        <span>₽3688</span>
+                    </div>
+                </div>
+
+                <!-- Форма с данными пользователя -->
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="name">ФИО</label>
+                        <input type="text" id="name" class="form-control" placeholder="Иванов Иван Иванович" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Телефон</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="+7 (999) 123-45-67" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Адрес доставки</label>
+                        <input type="text" id="address" class="form-control" placeholder="Город, улица, дом, квартира" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card-element">Данные карты</label>
+                        <div id="card-element" class="StripeElement"></div>
+                        <div class="payment-errors" id="card-errors"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Оплатить ₽3688</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 ЛисёнокМаркет. Все права лисят защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+
+// Получаем данные заказа из localStorage
+const orderData = JSON.parse(localStorage.getItem("currentOrder")) || {
+    items: [],
+    productsTotal: 0,
+    delivery: 0,
+    total: 0
+};
+
+// Обновляем блок с суммой заказа
+document.querySelector('.order-summary').innerHTML = `
+    <h3>Ваш заказ</h3>
+    <div class="summary-row">
+        <span>Товары (${orderData.items.reduce((sum, item) => sum + item.quantity, 0)} шт.)</span>
+        <span>₽${orderData.productsTotal}</span>
+    </div>
+    <div class="summary-row">
+        <span>Доставка</span>
+        <span>₽${orderData.delivery}</span>
+    </div>
+    <div class="summary-row total">
+        <span>Итого к оплате</span>
+        <span>₽${orderData.total}</span>
+    </div>
+`;
+
+// Обновляем текст кнопки
+document.querySelector('.btn-primary').textContent = `Оплатить ₽${orderData.total}`;
+
+        // Заменить на реальный публичный ключ Stripe
+        const stripe = Stripe("pk_test_51N...");
+
+        const elements = stripe.elements();
+        const card = elements.create('card');
+        card.mount('#card-element');
+
+        // Обработка ошибок ввода
+        card.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Отправка формы
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Собираем данные формы
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                amount: 3688 // В реальном приложении должно браться из корзины
+            };
+
+            const { paymentIntent, error } = await stripe.confirmCardPayment(
+                "<?= $_GET['client_secret'] ?>", // client_secret из сервера
+                {
+                    payment_method: {
+                        card: card,
+                        billing_details: {
+                            name: formData.name,
+                            phone: formData.phone,
+                            address: {
+                                line1: formData.address
+                            }
+                        },
+                    },
+                }
+            );
+
+            if (error) {
+                document.getElementById('card-errors').textContent = error.message;
+            } else {
+                if (paymentIntent.status === 'succeeded') {
+                    // Здесь можно отправить данные заказа на сервер
+                    alert("Платеж прошёл успешно! Ваш заказ оформлен.");
+                    window.location.href = "/success.html"; // Перенаправление
+                }
+            }
+        });
+
+        // При загрузке страницы: заполняем данные пользователя, если он авторизован
+        window.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem("userName");
+            if (userName) {
+                document.getElementById('name').value = userName;
+            }
+        });
+    </script>
+</body>
+</html>
