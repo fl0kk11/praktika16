@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЛисёнокМаркет - Детали товара</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="data.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <a href="основная страница.html"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+      </div>
+      <div class="search">
+        <input type="text" id="search-input" placeholder="Поиск товаров...">
+        <button id="search-button"><i class="fas fa-search"></i></button>
+        <div id="search-suggestions"></div>
+      </div>
+      <div class="user-actions">
+        <div class="user-menu">
+          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
+          <div class="user-dropdown" id="user-dropdown">
+            <button id="logout-btn">Выйти</button>
+          </div>
+        </div>
+        <a href="favorites.html"><i class="fas fa-heart"></i></a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container product-page">
+    <div id="product-details">
+      <!-- Детали товара будут добавлены с помощью JavaScript -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>Лисёнок Маркет</h3>
+          <p>Лучший выбор товаров для ваших любимцев</p>
+        </div>
+        <div class="footer-col">
+          <h3>Контакты</h3>
+          <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
+          <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
+        </div>
+        <div class="footer-col">
+          <h3>Соцсети</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-vk"></i></a>
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Получаем id товара из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    // Отображаем товар
+    function renderProduct() {
+      const product = products.find(p => p.id == productId);
+      const productDetails = document.getElementById('product-details');
+
+      if (!product) {
+        productDetails.innerHTML = '<p>Товар не найден.</p>';
+        return;
+      }
+
+      productDetails.innerHTML = `
+        <div class="product-detail">
+          <div class="product-images">
+            <div class="main-image">
+              <img src="${product.image}" alt="${product.name}">
+            </div>
+          </div>
+          <div class="product-info">
+            <h1>${product.name}</h1>
+            <div class="price">
+              <span class="current-price">₽${product.price}</span>
+              ${product.oldPrice ? `<span class="old-price">₽${product.oldPrice}</span>` : ''}
+            </div>
+            <p class="product-description">${product.description}</p>
+            <p><strong>Категория:</strong> ${product.category}</p>
+            <button class="btn btn-primary" data-id="${product.id}">Добавить в корзину</button>
+          </div>
+        </div>
+        <div class="related-products">
+          <h2>Похожие товары</h2>
+          <div class="product-grid">
+            ${products
+              .filter(p => p.category === product.category && p.id !== product.id)
+              .slice(0, 3)
+              .map(p => `
+              <div class="product-card">
+    <button class="favorite-btn" data-id="${p.id}"><i class="far fa-heart"></i></button>
+    ${p.discount ? `<div class="product-badge">${p.discount}</div>` : ''}
+    <a href="product.html?id=${p.id}" class="product-link"></a>
+    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+        <img src="${p.image}" alt="${p.name}">
+    </div>
+    <div class="product-details">
+        <h3>${p.name}</h3>
+        <div class="price">
+            <span class="current-price">₽${p.price}</span>
+            ${p.oldPrice ? `<span class="old-price">₽${p.oldPrice}</span>` : ''}
+        </div>
+        <button class="btn btn-small" data-id="${p.id}">В корзину</button>
+    </div>
+</div>
+`).join('')}
+          </div>
+        </div>
+      `;
+
+      // Обработчик кнопки добавления в корзину
+      document.querySelector('.btn-primary').addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        addToCart(id);
+      });
+
+      // Обработчики для похожих товаров
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          addToFavorites(productId);
+          
+          this.classList.toggle('active');
+          const icon = this.querySelector('i');
+          icon.classList.toggle('far');
+          icon.classList.toggle('fas');
+        });
+      });
+      
+      document.querySelectorAll('.btn-small').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          addToCart(productId);
+        });
+      });
+    }
+
+    // Функция добавления в корзину
+    function addToCart(productId) {
+      if (!localStorage.getItem("userName")) {
+        window.location.href = "авторизация.html";
+        return;
+      }
+      
+      let cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: productId,
+          quantity: 1
+        });
+      }
+      
+      localStorage.setItem("userCart", JSON.stringify(cart));
+      alert("Товар добавлен в корзину!");
+    }
+
+    // Функция добавления в избранное
+    function addToFavorites(productId) {
+      if (!localStorage.getItem("userName")) {
+        window.location.href = "авторизация.html";
+        return;
+      }
+      
+      let favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
+      if (!favorites.includes(productId)) {
+        favorites.push(productId);
+        localStorage.setItem("userFavorites", JSON.stringify(favorites));
+      } else {
+        favorites = favorites.filter(id => id !== productId);
+        localStorage.setItem("userFavorites", JSON.stringify(favorites));
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', renderProduct);
+  </script>
+</body>
+</html>

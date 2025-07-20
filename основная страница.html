@@ -6,12 +6,19 @@
   <title>Лисёнок - маркет</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ <!-- Подключаем файл с данными товаров -->
+  <script src="data.js" defer></script>
 </head>
 <body>
   <header class="header">
     <div class="container">
       <div class="logo">
-        <a href="#"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+        <a href="основная страница.html"><i class="fas fa-store"></i> Лисёнок<span>Маркет</span></a>
+      </div>
+      <div class="search">
+        <input type="text" id="search-input" placeholder="Поиск товаров...">
+        <button id="search-button"><i class="fas fa-search"></i></button>
+        <div id="search-suggestions"></div>
       </div>
       <div class="user-actions">
         <div class="user-menu">
@@ -41,70 +48,39 @@
   </section>
 
   <!-- Категории -->
-  <section class="categories">
-    <div class="container">
-      <h2 class="section-title">Категории</h2>
-      <div class="category-grid">
-        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
-          <div class="category-icon"><i class="fas fa-paw"></i></div>
-          <h3>Лисы</h3>
-        </a>
-        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
-          <div class="category-icon"><i class="fas fa-cat"></i></div>
-          <h3>Кошки</h3>
-        </a>
-        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
-          <div class="category-icon"><i class="fas fa-dog"></i></div>
-          <h3>Собаки</h3>
-        </a>
-        <a href="#" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
-          <div class="category-icon"><i class="fas fa-dove"></i></div>
-          <h3>Птицы</h3>
-        </a>
-      </div>
+<section class="categories">
+  <div class="container">
+    <h2 class="section-title">Категории</h2>
+    <div class="category-grid">
+      <a href="category.html?name=Лисы" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+        <div class="category-icon"><i class="fas fa-paw"></i></div>
+        <h3>Лисы</h3>
+      </a>
+      <a href="category.html?name=Кошки" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
+        <div class="category-icon"><i class="fas fa-cat"></i></div>
+        <h3>Кошки</h3>
+      </a>
+      <a href="category.html?name=Собаки" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
+        <div class="category-icon"><i class="fas fa-dog"></i></div>
+        <h3>Собаки</h3>
+      </a>
+      <a href="category.html?name=Птицы" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
+        <div class="category-icon"><i class="fas fa-dove"></i></div>
+        <h3>Птицы</h3>
+      </a>
     </div>
-  </section>
+  </div>
+</section>
 
- <section class="products">
-    <div class="container">
-      <h2 class="section-title">Популярные товары</h2>
-      <div class="product-grid">
-        <div class="product-card">
-          <!-- Добавляем кнопку избранного -->
-          <button class="favorite-btn" data-id="1"><i class="far fa-heart"></i></button>
-          <div class="product-badge">-15%</div>
-          <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-            <img src="https://via.placeholder.com/300x300?text=Хатка крафтовая" alt="Хатка крафтовая">
-          </div>
-          <div class="product-details">
-            <h3>Бобриная Хатка</h3>
-            <div class="price">
-              <span class="current-price">₽1699</span>
-              <span class="old-price">₽1999</span>
-            </div>
-            <!-- Добавляем data-id для кнопки -->
-            <button class="btn btn-small" data-id="1">В корзину</button>
-          </div>
-        </div>
-
-        <div class="product-card">
-          <button class="favorite-btn" data-id="2"><i class="far fa-heart"></i></button>
-          <div class="product-badge">-17%</div>
-          <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-            <img src="https://via.placeholder.com/300x300?text=Норка для суриката" alt="Норка крафтовая">
-          </div>
-          <div class="product-details">
-            <h3>Норка для суриката</h3>
-            <div class="price">
-              <span class="current-price">₽1499</span>
-              <span class="old-price">₽1799</span>
-            </div>
-            <button class="btn btn-small" data-id="2">В корзину</button>
-          </div>
-        </div>
-      </div>
+ <!-- Товары -->
+<section class="products">
+  <div class="container">
+    <h2 class="section-title">Популярные товары</h2>
+    <div class="product-grid" id="product-grid">
+      <!-- Товары будут добавлены с помощью JavaScript -->
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Подвал -->
   <footer class="footer">
@@ -160,66 +136,63 @@
       return localStorage.getItem("userName") !== null;
     }
     
-    // Функция для добавления в избранное
-    function addToFavorites(productId) {
-      if (!checkAuth()) {
-        window.location.href = "авторизация.html";
-        return;
-      }
-      
-      let favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
-      if (!favorites.includes(productId)) {
-        favorites.push(productId);
-        localStorage.setItem("userFavorites", JSON.stringify(favorites));
-      }
-    }
-    
-    // Функция для добавления в корзину
-    function addToCart(productId) {
-      if (!checkAuth()) {
-        window.location.href = "авторизация.html";
-        return;
-      }
-      
-      let cart = JSON.parse(localStorage.getItem("userCart")) || [];
-      const existingItem = cart.find(item => item.id === productId);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id: productId,
-          quantity: 1
+    // Функция для отображения товаров
+    function renderProducts() {
+      const productGrid = document.getElementById('product-grid');
+      productGrid.innerHTML = '';
+
+      products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+    <button class="favorite-btn" data-id="${product.id}"><i class="far fa-heart"></i></button>
+    ${product.discount ? `<div class="product-badge">${product.discount}</div>` : ''}
+    <a href="product.html?id=${product.id}" class="product-link"></a>
+    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+        <img src="${product.image}" alt="${product.name}">
+    </div>
+    <div class="product-details">
+        <h3>${product.name}</h3>
+        <div class="price">
+            <span class="current-price">₽${product.price}</span>
+            ${product.oldPrice ? `<span class="old-price">₽${product.oldPrice}</span>` : ''}
+        </div>
+    </div>
+    <div class="product-actions">
+        <button class="btn btn-small" data-id="${product.id}">В корзину</button>
+    </div>
+`;
+        productGrid.appendChild(productCard);
+      });
+
+      // Обработчики для кнопок избранного и корзины
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          addToFavorites(productId);
+          
+          // Переключение состояния сердечка
+          this.classList.toggle('active');
+          const icon = this.querySelector('i');
+          icon.classList.toggle('far');
+          icon.classList.toggle('fas');
         });
-      }
+      });
       
-      localStorage.setItem("userCart", JSON.stringify(cart));
-      alert("Товар добавлен в корзину!");
+      document.querySelectorAll('.btn-small').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = this.getAttribute('data-id');
+          addToCart(productId);
+        });
+      });
     }
-    
-    // Обработчики для кнопок
-    document.querySelectorAll('.favorite-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const productId = this.getAttribute('data-id');
-        addToFavorites(productId);
-        
-        // Переключение состояния сердечка
-        this.classList.toggle('active');
-        const icon = this.querySelector('i');
-        icon.classList.toggle('far');
-        icon.classList.toggle('fas');
-      });
-    });
-    
-    document.querySelectorAll('.btn-small').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const productId = this.getAttribute('data-id');
-        addToCart(productId);
-      });
-    });
-    
-    // При загрузке страницы: отмечаем избранные товары
+
+    // Вызываем отрисовку товаров при загрузке
     window.addEventListener('DOMContentLoaded', () => {
+      // ... (код авторизации) ...
+      renderProducts();
+
+      // Инициализация избранного (если пользователь авторизован)
       if (checkAuth()) {
         const favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
         favorites.forEach(favId => {
@@ -232,7 +205,64 @@
           }
         });
       }
+
+      // Реализация поиска с автодополнением
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.getElementById('search-button');
+      const searchSuggestions = document.getElementById('search-suggestions');
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        searchSuggestions.innerHTML = '';
+        searchSuggestions.style.display = 'none';
+
+        if (query.length > 1) {
+          const matchedProducts = products.filter(product => 
+            product.name.toLowerCase().includes(query)
+          ).slice(0, 5);
+
+          if (matchedProducts.length > 0) {
+            matchedProducts.forEach(product => {
+              const suggestion = document.createElement('div');
+              suggestion.className = 'search-suggestion';
+              suggestion.textContent = product.name;
+              suggestion.addEventListener('click', function() {
+                searchInput.value = product.name;
+                searchSuggestions.innerHTML = '';
+                searchSuggestions.style.display = 'none';
+                window.location.href = `search.html?q=${encodeURIComponent(product.name)}`;
+              });
+              searchSuggestions.appendChild(suggestion);
+            });
+            searchSuggestions.style.display = 'block';
+          }
+        }
+      });
+
+      searchButton.addEventListener('click', function() {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+        }
+      });
+
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const query = searchInput.value.trim();
+          if (query) {
+            window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+
+      // Скрываем подсказки при клике вне поля поиска
+      document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && e.target !== searchSuggestions) {
+          searchSuggestions.style.display = 'none';
+        }
+      });
     });
+
   </script>
 </body>
 </html>
