@@ -304,7 +304,75 @@ document.querySelector('.order-summary').innerHTML = `
 document.querySelector('.btn-primary').textContent = `Оплатить ₽${orderData.total}`;
 
         // Заменить на реальный публичный ключ Stripe
-        const stripe = Stripe("pk_test_51N...");
+        async function initializeStripe() {
+  try {
+    // 1. Получаем публичный ключ с сервера
+    const configResponse = await fetch('/stripe-config');
+    const { publishableKey } = await configResponse.json();
+    
+    // 2. Инициализируем Stripe с полученным ключом
+    const stripe = Stripe(publishableKey);
+    const elements = stripe.elements();
+    const card = elements.create('card');
+    card.mount('#card-element');
+
+    // 3. Получаем clientSecret для текущего платежа
+    const orderData = JSON.parse(localStorage.getItem("currentOrder")) || {
+      items: [], productsTotal: 0, delivery: 0, total: 0
+    };
+
+    const intentResponse = await fetch('/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: orderData.total * 100 }) // amount в копейках
+    });
+    
+    const { clientSecret } = await intentResponse.json();
+
+    // 4. Обработка формы
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: card,
+            billing_details: {
+              name: document.getElementById('name').value,
+              phone: document.getElementById('phone').value,
+              address: {
+                line1: document.getElementById('address').value
+              }
+            }
+          }
+        }
+      );
+
+      if (error) {
+        document.getElementById('card-errors').textContent = error.message;
+      } else if (paymentIntent.status === 'succeeded') {
+        alert("Платеж прошёл успешно! Ваш заказ оформлен.");
+        window.location.href = "/success.html";
+      }
+    });
+
+  } catch (err) {
+    console.error('Stripe initialization error:', err);
+    alert('Ошибка при инициализации платежной системы');
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initializeStripe();
+  
+  // Автозаполнение имени пользователя
+  const userName = localStorage.getItem("userName");
+  if (userName) {
+    document.getElementById('name').value = userName;
+  }
+});
 
         const elements = stripe.elements();
         const card = elements.create('card');

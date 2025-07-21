@@ -6,8 +6,398 @@
   <title>Корзина | Лисёнок Маркет</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6a11cb;
+      --secondary: #2575fc;
+      --light: #f8f9ff;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: var(--light);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 30px rgba(106, 17, 203, 0.1);
+      padding: 15px 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo a i {
+      margin-right: 10px;
+    }
+
+    .logo span {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-actions a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Стили для страницы корзины */
+    .cart-page {
+      flex: 1;
+      padding: 40px 0;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .page-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .cart-container {
+      display: flex;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    .cart-items {
+      flex: 1;
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .cart-summary {
+      width: 350px;
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      align-self: flex-start;
+    }
+
+    .cart-summary h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: var(--text);
+    }
+
+    .cart-item {
+      display: flex;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: var(--light);
+      border-radius: 12px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .cart-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-item-image {
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+
+    .cart-item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-details h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .price {
+      margin-bottom: 15px;
+    }
+
+    .current-price {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      overflow: hidden;
+    }
+
+    .quantity-btn {
+      width: 35px;
+      height: 35px;
+      background: white;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .quantity-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .quantity-input {
+      width: 50px;
+      height: 35px;
+      text-align: center;
+      border: none;
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      font-size: 1rem;
+      appearance: textfield;
+    }
+
+    .quantity-input::-webkit-outer-spin-button,
+    .quantity-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.3s;
+    }
+
+    .remove-btn:hover {
+      color: #c0392b;
+    }
+
+    .summary-details {
+      margin: 20px 0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .summary-row.total {
+      font-weight: 700;
+      font-size: 1.2rem;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+      width: 100%;
+      margin-bottom: 15px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(106, 17, 203, 0.4);
+    }
+
+    .continue-shopping {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+
+    .empty-cart, .auth-message {
+      text-align: center;
+      padding: 50px 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .empty-cart i, .auth-message i {
+      font-size: 50px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+
+    .empty-cart h3, .auth-message h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--text);
+    }
+
+    .empty-cart p, .auth-message p {
+      color: var(--text-light);
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    /* Футер */
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      background: white;
+      box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .cart-container {
+        flex-direction: column;
+      }
+
+      .cart-summary {
+        width: 100%;
+      }
+
+      .cart-item {
+        flex-direction: column;
+      }
+
+      .cart-item-image {
+        width: 100%;
+        height: auto;
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+
+      .cart-item-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .quantity-selector {
+        width: 100%;
+      }
+
+      .remove-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .cart-items, .cart-summary {
+        padding: 15px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Остальная часть HTML остается без изменений -->
   <header class="header">
     <div class="container">
       <div class="logo">
@@ -26,7 +416,7 @@
     </div>
   </header>
 
-   <main class="container cart-page">
+  <main class="container cart-page">
     <h1 class="page-title">Ваша корзина</h1>
     
     <div id="cart-content">
@@ -45,31 +435,11 @@
 
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h3>Лисёнок Маркет</h3>
-          <p>Лучший выбор товаров для ваших любимцев</p>
-        </div>
-        <div class="footer-col">
-          <h3>Контакты</h3>
-          <p><i class="fas fa-envelope"></i> hello@LisenokMarket.com</p>
-          <p><i class="fas fa-phone"></i> +7 (123) 456-7890</p>
-        </div>
-        <div class="footer-col">
-          <h3>Соцсети</h3>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-vk"></i></a>
-            <a href="#"><i class="fab fa-telegram"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
+      <p>&copy; 2025 ЛисёнокМаркет. Все права лисят защищены.</p>
     </div>
   </footer>
 
+  <!-- Скрипт остается без изменений -->
   <script>
     // Обновление количества товаров
     document.querySelectorAll('.quantity-btn').forEach(btn => {
@@ -278,7 +648,7 @@
     // При загрузке страницы отображаем корзину
     window.addEventListener('DOMContentLoaded', renderCart);
 
-// Функция для расчета общей суммы заказа
+    // Функция для расчета общей суммы заказа
     function calculateOrderTotal() {
       const cart = JSON.parse(localStorage.getItem("userCart")) || [];
       let productsTotal = 0;

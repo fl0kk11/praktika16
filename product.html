@@ -7,6 +7,382 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="data.js" defer></script>
+  <style>
+    :root {
+      --primary: #6a11cb;
+      --secondary: #2575fc;
+      --light: #f8f9ff;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: var(--light);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 30px rgba(106, 17, 203, 0.1);
+      padding: 15px 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo a i {
+      margin-right: 10px;
+    }
+
+    .logo span {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .search {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      font-size: 1rem;
+      padding-right: 40px;
+    }
+
+    .search button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+
+    #search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      display: none;
+    }
+
+    .search-suggestion {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-suggestion:hover {
+      background: var(--light);
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-actions a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Стили для страницы товара */
+    .product-page {
+      flex: 1;
+      padding: 40px 0;
+    }
+
+    .product-detail {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+
+    .product-images {
+      flex: 1;
+    }
+
+    .main-image {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 400px;
+    }
+
+    .main-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-info h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .price {
+      margin-bottom: 20px;
+    }
+
+    .current-price {
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: var(--text-light);
+      font-size: 1.2rem;
+      margin-left: 10px;
+    }
+
+    .product-description {
+      margin-bottom: 20px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .related-products h2 {
+      font-size: 1.5rem;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .related-products h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(106, 17, 203, 0.15);
+    }
+
+    .favorite-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background: white;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+    }
+
+    .favorite-btn.active, .favorite-btn:hover {
+      color: #ff4757;
+    }
+
+    .product-image {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .product-image img {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.05);
+    }
+
+    .product-details {
+      padding: 20px;
+    }
+
+    .product-details h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    .btn-small {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+      width: 100%;
+    }
+
+    .btn-small:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    /* Футер */
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      background: white;
+      box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .social-links a {
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .header .container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .search {
+        max-width: 100%;
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .product-detail {
+        flex-direction: column;
+      }
+
+      .main-image {
+        height: 300px;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -20,12 +396,7 @@
         <div id="search-suggestions"></div>
       </div>
       <div class="user-actions">
-        <div class="user-menu">
-          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
-          <div class="user-dropdown" id="user-dropdown">
-            <button id="logout-btn">Выйти</button>
-          </div>
-        </div>
+        <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
         <a href="favorites.html"><i class="fas fa-heart"></i></a>
         <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
       </div>
@@ -106,22 +477,21 @@
               .slice(0, 3)
               .map(p => `
               <div class="product-card">
-    <button class="favorite-btn" data-id="${p.id}"><i class="far fa-heart"></i></button>
-    ${p.discount ? `<div class="product-badge">${p.discount}</div>` : ''}
-    <a href="product.html?id=${p.id}" class="product-link"></a>
-    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-        <img src="${p.image}" alt="${p.name}">
-    </div>
-    <div class="product-details">
-        <h3>${p.name}</h3>
-        <div class="price">
-            <span class="current-price">₽${p.price}</span>
-            ${p.oldPrice ? `<span class="old-price">₽${p.oldPrice}</span>` : ''}
-        </div>
-        <button class="btn btn-small" data-id="${p.id}">В корзину</button>
-    </div>
-</div>
-`).join('')}
+                <button class="favorite-btn" data-id="${p.id}"><i class="far fa-heart"></i></button>
+                ${p.discount ? `<div class="product-badge">${p.discount}</div>` : ''}
+                <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+                  <img src="${p.image}" alt="${p.name}">
+                </div>
+                <div class="product-details">
+                  <h3><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                  <div class="price">
+                    <span class="current-price">₽${p.price}</span>
+                    ${p.oldPrice ? `<span class="old-price">₽${p.oldPrice}</span>` : ''}
+                  </div>
+                  <button class="btn btn-small" data-id="${p.id}">В корзину</button>
+                </div>
+              </div>
+              `).join('')}
           </div>
         </div>
       `;
@@ -193,7 +563,79 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', renderProduct);
+    // Инициализация поиска
+    function initSearch() {
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.getElementById('search-button');
+      const searchSuggestions = document.getElementById('search-suggestions');
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        searchSuggestions.innerHTML = '';
+        searchSuggestions.style.display = 'none';
+
+        if (query.length > 1) {
+          const matchedProducts = products.filter(product => 
+            product.name.toLowerCase().includes(query)
+          ).slice(0, 5);
+
+          if (matchedProducts.length > 0) {
+            matchedProducts.forEach(product => {
+              const suggestion = document.createElement('div');
+              suggestion.className = 'search-suggestion';
+              suggestion.textContent = product.name;
+              suggestion.addEventListener('click', function() {
+                searchInput.value = product.name;
+                searchSuggestions.innerHTML = '';
+                searchSuggestions.style.display = 'none';
+                window.location.href = `search.html?q=${encodeURIComponent(product.name)}`;
+              });
+              searchSuggestions.appendChild(suggestion);
+            });
+            searchSuggestions.style.display = 'block';
+          }
+        }
+      });
+
+      searchButton.addEventListener('click', function() {
+        const query = searchInput.value.trim();
+        if (query) {
+          window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+        }
+      });
+
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const query = searchInput.value.trim();
+          if (query) {
+            window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+
+      document.addEventListener('click', function(e) {
+        if (e.target !== searchInput && e.target !== searchSuggestions) {
+          searchSuggestions.style.display = 'none';
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProduct();
+      initSearch();
+      
+      // Авторизация (без кнопки выхода)
+      const userLink = document.getElementById("user-link");
+      const userName = localStorage.getItem("userName");
+      
+      if (userName) {
+        userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
+        userLink.href = "account.html";
+      } else {
+        userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
+        userLink.href = "авторизация.html";
+      }
+    });
   </script>
 </body>
 </html>

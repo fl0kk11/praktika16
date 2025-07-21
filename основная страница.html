@@ -6,8 +6,442 @@
   <title>Лисёнок - маркет</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- <!-- Подключаем файл с данными товаров -->
   <script src="data.js" defer></script>
+  <style>
+    :root {
+      --primary: #6a11cb;
+      --secondary: #2575fc;
+      --light: #f8f9ff;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: var(--light);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 30px rgba(106, 17, 203, 0.1);
+      padding: 15px 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo a {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+    }
+
+    .logo a i {
+      margin-right: 10px;
+    }
+
+    .logo span {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .search {
+      position: relative;
+      flex: 1;
+      max-width: 500px;
+      margin: 0 20px;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 30px;
+      font-size: 1rem;
+      padding-right: 40px;
+    }
+
+    .search button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+
+    #search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      display: none;
+    }
+
+    .search-suggestion {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .search-suggestion:hover {
+      background: var(--light);
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-actions a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      padding: 80px 0;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      margin-bottom: 40px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 span {
+      display: inline-block;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Стили для категорий и товаров */
+    .section-title {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    .category-grid, .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .category-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px 20px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--gradient);
+      z-index: 2;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(106, 17, 203, 0.15);
+    }
+
+    .category-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .category-card h3 {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+
+    /* Стили для карточек товаров */
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(106, 17, 203, 0.15);
+    }
+
+    .favorite-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background: white;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+    }
+
+    .favorite-btn.active, .favorite-btn:hover {
+      color: #ff4757;
+    }
+
+    .product-image {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .product-image img {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover .product-image img {
+      transform: scale(1.05);
+    }
+
+    .product-details {
+      padding: 20px;
+    }
+
+    .product-details h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .price {
+      margin-bottom: 15px;
+    }
+
+    .current-price {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-left: 5px;
+    }
+
+    .btn-small {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+      width: 100%;
+    }
+
+    .btn-small:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
+    }
+
+    /* Футер */
+    .footer {
+      text-align: center;
+      padding: 20px 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      background: white;
+      box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.03);
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-links a {
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .header .container {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .search {
+        max-width: 100%;
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .category-grid, .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .section-title {
+        font-size: 1.5rem;
+      }
+
+      .category-grid, .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -21,16 +455,10 @@
         <div id="search-suggestions"></div>
       </div>
       <div class="user-actions">
-        <div class="user-menu">
-          <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
-        <div class="user-dropdown" id="user-dropdown">
-          <button id="logout-btn">Выйти</button>
-        </div>
+        <a href="авторизация.html" id="user-link"><i class="fas fa-user"></i> Войти</a>
+        <a href="favorites.html"><i class="fas fa-heart"></i></a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
       </div>
-  <a href="favorites.html"><i class="fas fa-heart"></i></a>
-  <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
-</div>
-
     </div>
   </header>
 
@@ -44,43 +472,42 @@
         <a href="#" class="btn btn-outline">Узнать больше</a>
       </div>
     </div>
-    <div class="gradient-circle"></div>
   </section>
 
   <!-- Категории -->
-<section class="categories">
-  <div class="container">
-    <h2 class="section-title">Категории</h2>
-    <div class="category-grid">
-      <a href="category.html?name=Лисы" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
-        <div class="category-icon"><i class="fas fa-paw"></i></div>
-        <h3>Лисы</h3>
-      </a>
-      <a href="category.html?name=Кошки" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
-        <div class="category-icon"><i class="fas fa-cat"></i></div>
-        <h3>Кошки</h3>
-      </a>
-      <a href="category.html?name=Собаки" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
-        <div class="category-icon"><i class="fas fa-dog"></i></div>
-        <h3>Собаки</h3>
-      </a>
-      <a href="category.html?name=Птицы" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
-        <div class="category-icon"><i class="fas fa-dove"></i></div>
-        <h3>Птицы</h3>
-      </a>
+  <section class="categories">
+    <div class="container">
+      <h2 class="section-title">Категории</h2>
+      <div class="category-grid">
+        <a href="category.html?name=Лисы" class="category-card" style="--gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)">
+          <div class="category-icon"><i class="fas fa-paw"></i></div>
+          <h3>Лисы</h3>
+        </a>
+        <a href="category.html?name=Кошки" class="category-card" style="--gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)">
+          <div class="category-icon"><i class="fas fa-cat"></i></div>
+          <h3>Кошки</h3>
+        </a>
+        <a href="category.html?name=Собаки" class="category-card" style="--gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)">
+          <div class="category-icon"><i class="fas fa-dog"></i></div>
+          <h3>Собаки</h3>
+        </a>
+        <a href="category.html?name=Птицы" class="category-card" style="--gradient: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%)">
+          <div class="category-icon"><i class="fas fa-dove"></i></div>
+          <h3>Птицы</h3>
+        </a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
- <!-- Товары -->
-<section class="products">
-  <div class="container">
-    <h2 class="section-title">Популярные товары</h2>
-    <div class="product-grid" id="product-grid">
-      <!-- Товары будут добавлены с помощью JavaScript -->
+  <!-- Товары -->
+  <section class="products">
+    <div class="container">
+      <h2 class="section-title">Популярные товары</h2>
+      <div class="product-grid" id="product-grid">
+        <!-- Товары будут добавлены с помощью JavaScript -->
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Подвал -->
   <footer class="footer">
@@ -109,28 +536,12 @@
       <p>&copy; 2025 LisenokMarket. Все права защищены.</p>
     </div>
   </footer>
-  <script>
-    const userLink = document.getElementById("user-link");
-    const logoutBtn = document.getElementById("logout-btn"); // кнопка "Выйти"
-    const userName = localStorage.getItem("userName");
-  if (userName) {
-    userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
-    userLink.href = "account.html";
-      if (logoutBtn) logoutBtn.style.display = "inline-block";
-  } else {
-    userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
-    userLink.href = "авторизация.html";
-    if (logoutBtn) logoutBtn.style.display = "none";
-  }
 
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("userName");
-      window.location.href = "/авторизация.html";
-    });
-  }
-   // ... (существующий код авторизации) ...
-    
+  <script>
+    // Получаем название категории из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryName = urlParams.get('name');
+
     // Функция для проверки авторизации
     function checkAuth() {
       return localStorage.getItem("userName") !== null;
@@ -145,23 +556,20 @@
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.innerHTML = `
-    <button class="favorite-btn" data-id="${product.id}"><i class="far fa-heart"></i></button>
-    ${product.discount ? `<div class="product-badge">${product.discount}</div>` : ''}
-    <a href="product.html?id=${product.id}" class="product-link"></a>
-    <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
-        <img src="${product.image}" alt="${product.name}">
-    </div>
-    <div class="product-details">
-        <h3>${product.name}</h3>
-        <div class="price">
-            <span class="current-price">₽${product.price}</span>
-            ${product.oldPrice ? `<span class="old-price">₽${product.oldPrice}</span>` : ''}
-        </div>
-    </div>
-    <div class="product-actions">
-        <button class="btn btn-small" data-id="${product.id}">В корзину</button>
-    </div>
-`;
+          <button class="favorite-btn" data-id="${product.id}"><i class="far fa-heart"></i></button>
+          ${product.discount ? `<div class="product-badge">${product.discount}</div>` : ''}
+          <div class="product-image" style="background: linear-gradient(45deg, #6a11cb, #2575fc)">
+            <img src="${product.image}" alt="${product.name}">
+          </div>
+          <div class="product-details">
+            <h3><a href="product.html?id=${product.id}">${product.name}</a></h3>
+            <div class="price">
+              <span class="current-price">₽${product.price}</span>
+              ${product.oldPrice ? `<span class="old-price">₽${product.oldPrice}</span>` : ''}
+            </div>
+            <button class="btn btn-small" data-id="${product.id}">В корзину</button>
+          </div>
+        `;
         productGrid.appendChild(productCard);
       });
 
@@ -171,7 +579,6 @@
           const productId = this.getAttribute('data-id');
           addToFavorites(productId);
           
-          // Переключение состояния сердечка
           this.classList.toggle('active');
           const icon = this.querySelector('i');
           icon.classList.toggle('far');
@@ -187,26 +594,48 @@
       });
     }
 
-    // Вызываем отрисовку товаров при загрузке
-    window.addEventListener('DOMContentLoaded', () => {
-      // ... (код авторизации) ...
-      renderProducts();
-
-      // Инициализация избранного (если пользователь авторизован)
-      if (checkAuth()) {
-        const favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
-        favorites.forEach(favId => {
-          const btn = document.querySelector(`.favorite-btn[data-id="${favId}"]`);
-          if (btn) {
-            btn.classList.add('active');
-            const icon = btn.querySelector('i');
-            icon.classList.remove('far');
-            icon.classList.add('fas');
-          }
+    // Функция добавления в корзину
+    function addToCart(productId) {
+      if (!localStorage.getItem("userName")) {
+        window.location.href = "авторизация.html";
+        return;
+      }
+      
+      let cart = JSON.parse(localStorage.getItem("userCart")) || [];
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: productId,
+          quantity: 1
         });
       }
+      
+      localStorage.setItem("userCart", JSON.stringify(cart));
+      alert("Товар добавлен в корзину!");
+    }
 
-      // Реализация поиска с автодополнением
+    // Функция добавления в избранное
+    function addToFavorites(productId) {
+      if (!localStorage.getItem("userName")) {
+        window.location.href = "авторизация.html";
+        return;
+      }
+      
+      let favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
+      if (!favorites.includes(productId)) {
+        favorites.push(productId);
+        localStorage.setItem("userFavorites", JSON.stringify(favorites));
+      } else {
+        favorites = favorites.filter(id => id !== productId);
+        localStorage.setItem("userFavorites", JSON.stringify(favorites));
+      }
+    }
+
+    // Инициализация поиска
+    function initSearch() {
       const searchInput = document.getElementById('search-input');
       const searchButton = document.getElementById('search-button');
       const searchSuggestions = document.getElementById('search-suggestions');
@@ -255,14 +684,42 @@
         }
       });
 
-      // Скрываем подсказки при клике вне поля поиска
       document.addEventListener('click', function(e) {
         if (e.target !== searchInput && e.target !== searchSuggestions) {
           searchSuggestions.style.display = 'none';
         }
       });
-    });
+    }
 
+    window.addEventListener('DOMContentLoaded', () => {
+      const userLink = document.getElementById("user-link");
+      const userName = localStorage.getItem("userName");
+      
+      if (userName) {
+        userLink.innerHTML = `<i class="fas fa-user"></i> ${userName}`;
+        userLink.href = "account.html";
+      } else {
+        userLink.innerHTML = `<i class="fas fa-user"></i> Войти`;
+        userLink.href = "авторизация.html";
+      }
+
+      renderProducts();
+      initSearch();
+
+      // Инициализация избранного (если пользователь авторизован)
+      if (checkAuth()) {
+        const favorites = JSON.parse(localStorage.getItem("userFavorites")) || [];
+        favorites.forEach(favId => {
+          const btn = document.querySelector(`.favorite-btn[data-id="${favId}"]`);
+          if (btn) {
+            btn.classList.add('active');
+            const icon = btn.querySelector('i');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
